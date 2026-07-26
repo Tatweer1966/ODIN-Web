@@ -1,4 +1,6 @@
-﻿export { defaultGisLayers } from "./layers/defaultLayers";
+﻿export * from "./engine";
+
+export { defaultGisLayers } from "./layers/defaultLayers";
 export { LayerRegistry } from "./services/LayerRegistry";
 export { layerRegistry } from "./services/layerRegistryInstance";
 export { useLayerRegistry } from "./hooks/useLayerRegistry";
