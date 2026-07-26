@@ -15,5 +15,13 @@ export type {
   MapServiceOptions,
 } from "./LayerTypes";
 
+export {
+  LayerController,
+} from "./LayerController";
+
+export type {
+  LayerControllerOptions,
+} from "./LayerController";
+
 export { MapService } from "./MapService";
 export { OpenLayersAdapter } from "./OpenLayersAdapter";

@@ -6,24 +6,25 @@ import type BaseLayer from "ol/layer/Base";
 import { fromLonLat } from "ol/proj";
 import type Projection from "ol/proj/Projection";
 
-import { OpenLayersAdapter } from "./OpenLayersAdapter";
+import type { LayerRegistry } from "../services/LayerRegistry";
 import type { MapServiceOptions } from "./LayerTypes";
+import { LayerController } from "./LayerController";
+import { OpenLayersAdapter } from "./OpenLayersAdapter";
 
 export class MapService {
   private map?: Map;
 
   private adapter?: OpenLayersAdapter;
 
+  private layerController?: LayerController;
+
   create(options: MapServiceOptions = {}): Map {
     if (this.map) {
-      throw new Error(
-        "The OpenLayers map has already been created.",
-      );
+      throw new Error("The OpenLayers map has already been created.");
     }
 
     const projection = options.projection ?? "EPSG:3857";
-    const geographicCenter =
-      options.center ?? [31.2357, 30.0444];
+    const geographicCenter = options.center ?? [31.2357, 30.0444];
 
     const center =
       projection === "EPSG:4326"
@@ -67,11 +68,40 @@ export class MapService {
   getAdapter(): OpenLayersAdapter {
     if (!this.adapter) {
       throw new Error(
-        "The OpenLayers layer adapter is not initialized.",
+        "The OpenLayers layer adapter has not been initialized.",
       );
     }
 
     return this.adapter;
+  }
+
+  createLayerController(
+    registry: LayerRegistry,
+  ): LayerController {
+    if (this.layerController) {
+      throw new Error(
+        "The MapService already owns a LayerController.",
+      );
+    }
+
+    this.layerController = new LayerController(
+      registry,
+      this.getAdapter(),
+    );
+
+    this.layerController.initialize();
+
+    return this.layerController;
+  }
+
+  getLayerController(): LayerController {
+    if (!this.layerController) {
+      throw new Error(
+        "The LayerController has not been initialized.",
+      );
+    }
+
+    return this.layerController;
   }
 
   setTarget(target?: HTMLElement | string): void {
@@ -102,13 +132,13 @@ export class MapService {
     this.getAdapter().setZIndex(id, order);
   }
 
-  setCenter(coordinate: Coordinate): void {
-    this.getView().setCenter(coordinate);
+  setCenter(center: Coordinate): void {
+    this.getView().setCenter(center);
   }
 
   setZoom(zoom: number): void {
     if (!Number.isFinite(zoom)) {
-      throw new Error(`Invalid map zoom value "${zoom}".`);
+      throw new Error(`Invalid zoom value "${zoom}".`);
     }
 
     this.getView().setZoom(zoom);
@@ -139,7 +169,7 @@ export class MapService {
 
     if (!size) {
       throw new Error(
-        "Cannot fit an extent before the map has a rendered size.",
+        "Cannot fit extent because the map has no rendered size.",
       );
     }
 
@@ -162,23 +192,22 @@ export class MapService {
     const layer = this.getAdapter().get(id);
 
     if (!layer) {
-      throw new Error(
-        `Cannot zoom to unregistered layer "${id}".`,
-      );
+      throw new Error(`Layer "${id}" is not registered.`);
     }
 
-    const sourceCandidate = layer as BaseLayer & {
-      getSource?: () => {
-        getExtent?: () => Extent;
-      } | null;
-    };
+    const source = (
+      layer as BaseLayer & {
+        getSource?: () => {
+          getExtent?: () => Extent;
+        } | null;
+      }
+    ).getSource?.();
 
-    const source = sourceCandidate.getSource?.();
     const extent = source?.getExtent?.();
 
     if (!extent) {
       throw new Error(
-        `GIS layer "${id}" does not expose a usable extent.`,
+        `Layer "${id}" does not expose an extent.`,
       );
     }
 
@@ -190,6 +219,9 @@ export class MapService {
   }
 
   destroy(): void {
+    this.layerController?.dispose();
+    this.layerController = undefined;
+
     this.adapter?.destroy();
     this.adapter = undefined;
 
