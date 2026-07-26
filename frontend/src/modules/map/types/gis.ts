@@ -35,37 +35,42 @@ export type GisLayerSecurity =
 export interface GisLayerDefinition {
   id: string;
   title: string;
+
   kind: GisLayerKind;
-  group: GisLayerGroup;
+  group?: GisLayerGroup;
 
   visible: boolean;
   locked: boolean;
   opacity: number;
   order: number;
 
+  readOnly?: boolean;
+
   selectable?: boolean;
   editable?: boolean;
   removable?: boolean;
   exportable?: boolean;
+  expanded?: boolean;
 
   featureCount?: number;
   sourceName?: string;
+
+  owner?: string;
+  color?: string;
+  icon?: string;
+  tags?: string[];
+
   security?: GisLayerSecurity;
+
   metadata?: Record<string, unknown>;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface GisLayerUpdate {
-  title?: string;
-  visible?: boolean;
-  locked?: boolean;
-  opacity?: number;
-  order?: number;
-  selectable?: boolean;
-  editable?: boolean;
-  featureCount?: number;
-  security?: GisLayerSecurity;
-  metadata?: Record<string, unknown>;
-}
+export type GisLayerUpdate = Partial<
+  Omit<GisLayerDefinition, "id">
+>;
 
 export interface MapCoordinate {
   longitude: number;
