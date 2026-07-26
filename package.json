@@ -1,0 +1,21 @@
+{
+  "name": "odin-web",
+  "version": "0.2.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c blue,green \"npm run start:dev --workspace backend\" \"npm run dev --workspace frontend\"",
+    "build": "npm run build --workspace backend && npm run build --workspace frontend",
+    "lint": "npm run lint --workspace backend && npm run lint --workspace frontend",
+    "db:up": "docker compose up -d database",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f database",
+    "status": "docker compose ps"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

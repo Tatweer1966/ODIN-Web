@@ -1,0 +1,22 @@
+services:
+  database:
+    image: postgis/postgis:17-3.5
+    container_name: odin-web-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odin
+      POSTGRES_USER: odin
+      POSTGRES_PASSWORD: odin_dev_password
+    ports:
+      - "55432:5432"
+    volumes:
+      - odin_postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odin -d odin"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  odin_postgres_data:

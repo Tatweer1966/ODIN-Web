@@ -1,0 +1,22 @@
+{
+  "product": "ODIN Web",
+  "version": "0.3.0",
+  "completedModules": [
+    "foundation",
+    "authentication"
+  ],
+  "plannedModules": [
+    "project-manager",
+    "gis-engine",
+    "layer-manager",
+    "drawing-engine",
+    "military-symbols",
+    "collaboration",
+    "orbat",
+    "opord",
+    "coa",
+    "replay",
+    "reports",
+    "administration"
+  ]
+}
