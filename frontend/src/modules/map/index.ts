@@ -6,6 +6,7 @@ export { layerRegistry } from "./services/layerRegistryInstance";
 export { useLayerRegistry } from "./hooks/useLayerRegistry";
 export * from "./models";
 export * from "./commands";
+export * from "./selectors";
 
 export type {
   CoordinateFormat,
