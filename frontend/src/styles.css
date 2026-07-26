@@ -217,13 +217,11 @@ a {
   text-align: center;
 }
 
-.workspace-shell {
-  min-width: 0;
-  grid-column: 2;
-}
-
+.workspace-shell,
 [dir="rtl"] .workspace-shell {
-  grid-column: 1;
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
 }
 
 .command-bar {
@@ -2067,3 +2065,177 @@ a {
   border-radius: 0.35rem;
   cursor: pointer;
 }
+
+/* Phase 2.7.1 GIS map sizing fix - START */
+
+/*
+ * The grid row must be allowed to stretch and must provide a real containing
+ * block for the map canvas.
+ */
+.operational-map-page {
+  width: 100%;
+  min-width: 0;
+  min-height: 680px;
+}
+
+.map-workspace-grid {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/*
+ * OpenLayers requires a map target with a non-zero width and height.
+ */
+.map-canvas-shell {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #071319;
+}
+
+/*
+ * Keep the map absolute so overlays and controls remain positioned above it,
+ * but give it explicit dimensions inherited from the map shell.
+ */
+.operational-map {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  filter: saturate(0.68) contrast(1.13) brightness(0.66);
+}
+
+/*
+ * Prevent decorative overlays from affecting interaction or layout.
+ */
+.map-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Phase 2.7.1 GIS map sizing fix - END */
+
+/* Phase 2.7.2 map container responsive fix - START */
+
+/*
+ * Respond to the width available to the map page rather than the complete
+ * browser viewport. This prevents fixed side panels from reducing the
+ * OpenLayers column to zero width.
+ */
+.operational-map-page {
+  container-type: inline-size;
+  container-name: operational-map-workspace;
+}
+
+/*
+ * Keep all grid children capable of shrinking correctly.
+ */
+.map-workspace-grid,
+.map-canvas-shell,
+.operational-map,
+.map-panel,
+.map-right-rail {
+  min-width: 0;
+}
+
+/*
+ * When sufficient workspace width is available, retain the desktop layout.
+ */
+@container operational-map-workspace (min-width: 1101px) {
+  .operational-map-page.left-open.right-open .map-workspace-grid {
+    grid-template-columns: 276px minmax(0, 1fr) 260px;
+  }
+
+  .operational-map-page.left-open:not(.right-open) .map-workspace-grid {
+    grid-template-columns: 276px minmax(0, 1fr);
+  }
+
+  .operational-map-page:not(.left-open).right-open .map-workspace-grid {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+
+  .operational-map-page:not(.left-open):not(.right-open) .map-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * Use smaller side panels when the map page itself becomes narrower.
+ */
+@container operational-map-workspace (min-width: 761px) and (max-width: 1100px) {
+  .operational-map-page.left-open.right-open .map-workspace-grid {
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+  }
+
+  .operational-map-page.left-open:not(.right-open) .map-workspace-grid {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .operational-map-page:not(.left-open).right-open .map-workspace-grid {
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+
+  .operational-map-page:not(.left-open):not(.right-open) .map-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * At narrow workspace widths, side panels become unavailable so the map
+ * always receives the entire grid width.
+ */
+@container operational-map-workspace (max-width: 760px) {
+  .map-workspace-grid,
+  .operational-map-page.left-open .map-workspace-grid,
+  .operational-map-page.right-open .map-workspace-grid,
+  .operational-map-page.left-open.right-open .map-workspace-grid,
+  .operational-map-page:not(.left-open) .map-workspace-grid,
+  .operational-map-page:not(.right-open) .map-workspace-grid,
+  .operational-map-page:not(.left-open):not(.right-open) .map-workspace-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .layer-panel,
+  .map-right-rail {
+    display: none !important;
+  }
+
+  .map-canvas-shell {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  .operational-map {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/*
+ * Emergency fallback for extremely narrow embedded layouts.
+ */
+@container operational-map-workspace (max-width: 320px) {
+  .map-toolbar {
+    left: 6px;
+    right: 6px;
+    max-width: calc(100% - 12px);
+    overflow-x: auto;
+  }
+
+  .map-scale-card {
+    left: 6px;
+    max-width: calc(100% - 12px);
+  }
+}
+
+/* Phase 2.7.2 map container responsive fix - END */
