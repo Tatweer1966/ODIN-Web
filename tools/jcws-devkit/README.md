@@ -1,42 +1,20 @@
-# JCWS DevKit 1.0.0 — Milestone 1
+# JCWS DevKit 1.0.0 - Milestone 2
 
-Clean foundation release for ODIN-Web / JCWS.
+## Quality gate
 
-## Included
-
-- strict TypeScript project
-- Commander-based CLI
-- Zod configuration validation
-- Pino logger factory
-- JSON and Markdown report writers
-- Vitest unit tests
-- ESLint and Prettier quality gates
-- tsup executable build
+```powershell
+npm install
+npm run check
+```
 
 ## Commands
 
 ```powershell
-npm install
-npm run check
-node dist/index.js version
-node dist/index.js config
-node dist/index.js doctor
+node dist\index.js --cwd C:\Tatweer\ODIN-Web doctor
+node dist\index.js --cwd C:\Tatweer\ODIN-Web workspace
+node dist\index.js --cwd C:\Tatweer\ODIN-Web backup frontend\src\App.tsx frontend\src\locales\en\navigation.json
+node dist\index.js restore C:\Tatweer\ODIN-Web\.jcws-backups\<id>\manifest.json
+node dist\index.js --cwd C:\Tatweer\ODIN-Web clean --keep 30
 ```
 
-## Installation into ODIN-Web
-
-Delete the old mixed package first:
-
-```powershell
-Remove-Item -Recurse -Force C:\Tatweer\ODIN-Web\tools\jcws-devkit
-```
-
-Copy this clean `tools\jcws-devkit` directory into the repository, then run:
-
-```powershell
-cd C:\Tatweer\ODIN-Web\tools\jcws-devkit
-npm install
-npm run check
-```
-
-Do not copy this release over the legacy v0.2/v0.3 directory without deleting it first.
+Workspace reports are written to `reports/workspace.json` and `reports/workspace.md`.

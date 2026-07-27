@@ -1,11 +1,9 @@
 {
   "name": "@jcws/devkit",
-  "version": "1.0.0-m1",
+  "version": "1.0.0-m2",
   "private": true,
   "type": "module",
-  "bin": {
-    "jcws": "dist/index.js"
-  },
+  "bin": { "jcws": "dist/index.js" },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -15,9 +13,7 @@
     "format:check": "prettier --check .",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
-  "engines": {
-    "node": ">=20"
-  },
+  "engines": { "node": ">=20" },
   "dependencies": {
     "commander": "^14.0.0",
     "pino": "^9.7.0",

@@ -20,7 +20,7 @@ describe("loadConfig", () => {
       "utf8"
     );
     const loaded = loadConfig(cwd);
-    expect(loaded.config).toEqual({
+    expect(loaded.config).toMatchObject({
       projectName: "JCWS",
       logLevel: "debug",
       reportsDirectory: "out"

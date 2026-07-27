@@ -1,5 +1,10 @@
 {
   "projectName": "ODIN-Web",
   "logLevel": "info",
-  "reportsDirectory": "reports"
+  "reportsDirectory": "reports",
+  "backupsDirectory": ".jcws-backups",
+  "frontendCandidates": ["frontend", "apps/frontend", "client", "packages/web", "."],
+  "sourceDirectory": "src",
+  "localesDirectory": "src/locales",
+  "backupRetention": 30
 }
