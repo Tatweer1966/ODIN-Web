@@ -7,6 +7,7 @@ import {
 } from "ts-morph";
 
 import type { ClassifiedLocalizationEntry } from "../../classification/types.js";
+import { manageReactTranslationImports } from "./import-manager.js";
 import {
   locateLocalizationNode,
   type RewritableLocalizationNode,
@@ -17,6 +18,7 @@ import {
 } from "./replacement-builder.js";
 import type {
   LocalizationFileRewriteResult,
+  LocalizationImportManagementResult,
   LocalizationRewriteChange,
   LocalizationRewriteDiagnostic,
   LocalizationRewriteOptions,
@@ -24,6 +26,19 @@ import type {
 
 const defaultOptions: LocalizationRewriteOptions = {
   translationFunction: "t",
+  translationModule: "react-i18next",
+  translationHook: "useTranslation",
+  manageImports: true,
+};
+
+const skippedImportManagement: LocalizationImportManagementResult = {
+  attempted: false,
+  importAdded: false,
+  importUpdated: false,
+  hookInsertions: 0,
+  hookUpdates: 0,
+  existingBindings: 0,
+  unsupportedScopes: 0,
 };
 
 function createSourceFile(filePath: string, sourceText: string): SourceFile {
@@ -146,6 +161,11 @@ export function rewriteLocalizationSource(
     }
   }
 
+  const translatedKeys = new Set(changes.map((change) => change.key));
+  const importManagement =
+    changes.length === 0
+      ? skippedImportManagement
+      : manageReactTranslationImports(sourceFile, translatedKeys, options);
   const rewrittenText = sourceFile.getFullText();
 
   return {
@@ -154,6 +174,7 @@ export function rewriteLocalizationSource(
     rewrittenText,
     changes: changes.sort((left, right) => left.start - right.start),
     diagnostics,
+    importManagement,
     changed: rewrittenText !== sourceText,
   };
 }
