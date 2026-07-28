@@ -9,6 +9,19 @@ export type LocalizationRewriteStatus =
 
 export interface LocalizationRewriteOptions {
   readonly translationFunction: string;
+  readonly translationModule: string;
+  readonly translationHook: string;
+  readonly manageImports: boolean;
+}
+
+export interface LocalizationImportManagementResult {
+  readonly attempted: boolean;
+  readonly importAdded: boolean;
+  readonly importUpdated: boolean;
+  readonly hookInsertions: number;
+  readonly hookUpdates: number;
+  readonly existingBindings: number;
+  readonly unsupportedScopes: number;
 }
 
 export interface LocalizationRewriteDiagnostic {
@@ -35,5 +48,6 @@ export interface LocalizationFileRewriteResult {
   readonly rewrittenText: string;
   readonly changes: readonly LocalizationRewriteChange[];
   readonly diagnostics: readonly LocalizationRewriteDiagnostic[];
+  readonly importManagement: LocalizationImportManagementResult;
   readonly changed: boolean;
 }
