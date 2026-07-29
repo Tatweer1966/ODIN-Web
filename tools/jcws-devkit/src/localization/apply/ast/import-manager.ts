@@ -222,6 +222,22 @@ function insertHookIntoScope(
   return true;
 }
 
+function appendObjectBindingElement(
+  declaration: VariableDeclaration,
+  translationFunction: string,
+): boolean {
+  const nameNode = declaration.getNameNode();
+  if (!Node.isObjectBindingPattern(nameNode)) {
+    return false;
+  }
+
+  const existingElements = nameNode.getElements().map((element) => element.getText());
+  declaration.setName(
+    `{ ${[...existingElements, translationFunction].join(", ")} }`,
+  );
+  return true;
+}
+
 function ensureScopeTranslationBinding(
   scope: TranslationScope,
   sourceFile: SourceFile,
@@ -241,13 +257,9 @@ function ensureScopeTranslationBinding(
       return "existing-hook";
     }
 
-    const nameNode = hookDeclaration.getNameNode();
-    if (!Node.isObjectBindingPattern(nameNode)) {
-      return "unsupported";
-    }
-
-    nameNode.addBindingElement({ name: translationFunction });
-    return "updated-hook";
+    return appendObjectBindingElement(hookDeclaration, translationFunction)
+      ? "updated-hook"
+      : "unsupported";
   }
 
   return insertHookIntoScope(scope, hookLocalName, translationFunction)
