@@ -232,7 +232,7 @@ function appendObjectBindingElement(
   }
 
   const existingElements = nameNode.getElements().map((element) => element.getText());
-  declaration.setName(
+  nameNode.replaceWithText(
     `{ ${[...existingElements, translationFunction].join(", ")} }`,
   );
   return true;
